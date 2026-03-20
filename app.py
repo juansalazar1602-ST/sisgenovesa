@@ -115,7 +115,7 @@ elif opcion == "Propiedades":
                 conn.execute(text("""
                     UPDATE propiedades
                     SET tipo = :tipo,
-                        es_asociado = :asociado
+                        es_asociado = :es_asociado
                     WHERE id = :id
                 """), {
                     "tipo": nuevo_tipo,
