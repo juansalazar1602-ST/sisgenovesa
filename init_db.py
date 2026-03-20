@@ -95,6 +95,10 @@ def crear_tablas():
             activo BOOLEAN DEFAULT TRUE
         );
         """))
+        conn.execute(text("""
+        ALTER TABLE propiedades
+        ADD COLUMN IF NOT EXISTS es_asociado BOOLEAN DEFAULT TRUE;
+        """))
 
         conn.commit()
 
