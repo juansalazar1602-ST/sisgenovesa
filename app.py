@@ -4,9 +4,40 @@ from sqlalchemy import text
 from init_db import crear_tablas
 from seed_propiedades import cargar_propiedades
 from seed_usuarios import crear_admin
+import streamlit as st
+from sqlalchemy import text
+import bcrypt
+from db import engine
 crear_tablas()
 cargar_propiedades()
 crear_admin()
+
+
+if "usuario" not in st.session_state:
+    st.session_state.usuario = None
+
+def login():
+    st.title("Login SisGenovesa")
+
+    username = st.text_input("Usuario")
+    password = st.text_input("Contraseña", type="password")
+
+    if st.button("Ingresar"):
+        with engine.connect() as conn:
+            user = conn.execute(text("""
+                SELECT * FROM usuarios 
+                WHERE username = :u AND activo = TRUE
+            """), {"u": username}).fetchone()
+
+            if user:
+                if bcrypt.checkpw(password.encode(), user.password_hash.encode()):
+                    st.session_state.usuario = dict(user._mapping)
+                    st.success("Bienvenido")
+                    st.rerun()
+                else:
+                    st.error("Contraseña incorrecta")
+            else:
+                st.error("Usuario no existe")
 
 from sqlalchemy import text
 
