@@ -1,3 +1,6 @@
+if "usuario" not in st.session_state:
+    st.session_state.usuario = None
+
 import streamlit as st
 from db import engine
 from sqlalchemy import text
@@ -16,8 +19,7 @@ if st.session_state.usuario is None:
     login()
     st.stop()
 
-if "usuario" not in st.session_state:
-    st.session_state.usuario = None
+
 
 def login():
     st.title("Login SisGenovesa")
