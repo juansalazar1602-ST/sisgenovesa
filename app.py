@@ -15,12 +15,6 @@ crear_tablas()
 cargar_propiedades()
 crear_admin()
 
-if st.session_state.usuario is None:
-    login()
-    st.stop()
-
-
-
 def login():
     st.title("Login SisGenovesa")
 
