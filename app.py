@@ -2,9 +2,11 @@ import streamlit as st
 from db import engine
 from sqlalchemy import text
 from init_db import crear_tablas
-crear_tablas()
 from seed_propiedades import cargar_propiedades
+from seed_usuarios import crear_admin
+crear_tablas()
 cargar_propiedades()
+crear_admin()
 
 from sqlalchemy import text
 
