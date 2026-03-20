@@ -89,28 +89,33 @@ elif opcion == "Propiedades":
 
     with engine.connect() as conn:
         data = conn.execute(text("""
-            SELECT id, numero_propiedad, tipo 
+            SELECT id, numero_propiedad, asociado, tipo 
             FROM propiedades
             ORDER BY numero_propiedad
         """)).fetchall()
 
     for p in data:
-        col1, col2, col3, col4 = st.columns([1,2,2,2])
+        col1, col2, col3, col4, col5 = st.columns([1,2,2,2,2])
 
         col1.write(p.numero_propiedad)
         col2.write(p.tipo)
-
-        nuevo_tipo = col3.selectbox(
+        es_asociado = col3.checkbox(
+            "Asociado",
+            value=True if p.es_asociado else False,
+            key=f"asoc_{p.id}"
+        )
+        nuevo_tipo = col4.selectbox(
             f"Tipo {p.id}",
             ["CASA", "LOTE"],
             index=0 if p.tipo == "CASA" else 1
         )
 
-        if col4.button(f"Guardar {p.id}"):
+        if col5.button(f"Guardar {p.id}"):
             with engine.connect() as conn:
                 conn.execute(text("""
                     UPDATE propiedades
-                    SET tipo = :tipo
+                    SET tipo = :tipo,
+                        es_asociado = :asociado
                     WHERE id = :id
                 """), {
                     "tipo": nuevo_tipo,
