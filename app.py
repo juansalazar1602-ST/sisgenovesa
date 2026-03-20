@@ -89,7 +89,7 @@ elif opcion == "Propiedades":
 
     with engine.connect() as conn:
         data = conn.execute(text("""
-            SELECT id, numero_propiedad, asociado, tipo 
+            SELECT id, numero_propiedad, es_asociado, tipo 
             FROM propiedades
             ORDER BY numero_propiedad
         """)).fetchall()
