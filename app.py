@@ -63,9 +63,9 @@ st.sidebar.write(f"Rol: {usuario['rol']}")
 # MENÚ SEGÚN ROL
 # -----------------------------------
 if usuario["rol"] == "ADMIN":
-    opciones = ["Dashboard", "Propiedades", "Pagos", "Gastos", "Usuarios"]
+    opciones = ["Dashboard", "Propiedades", "Pagos", "Gastos", "Usuarios", "Cambiar Clave"]
 else:
-    opciones = ["Mi Estado de Cuenta"]
+    opciones = ["Mi Estado de Cuenta", "Cambiar Clave"]
 
 opcion = st.sidebar.selectbox("Menú", opciones)
 
@@ -153,6 +153,46 @@ elif opcion == "Usuarios" and usuario["rol"] == "ADMIN":
             conn.commit()
 
         st.success("Usuario creado correctamente")
+
+# modificar usuario y contraseña nueva
+
+elif opcion == "Cambiar Clave":
+
+    st.subheader("Cambiar contraseña")
+
+    actual = st.text_input("Contraseña actual", type="password")
+    nueva = st.text_input("Nueva contraseña", type="password")
+    confirmar = st.text_input("Confirmar nueva contraseña", type="password")
+
+    if st.button("Actualizar contraseña"):
+
+        if nueva != confirmar:
+            st.error("Las contraseñas no coinciden")
+        else:
+            with engine.connect() as conn:
+                user = conn.execute(text("""
+                    SELECT password_hash FROM usuarios
+                    WHERE id = :id
+                """), {"id": usuario["id"]}).fetchone()
+
+                if bcrypt.checkpw(actual.encode(), user.password_hash.encode()):
+
+                    nueva_hash = bcrypt.hashpw(nueva.encode(), bcrypt.gensalt()).decode()
+
+                    conn.execute(text("""
+                        UPDATE usuarios
+                        SET password_hash = :p
+                        WHERE id = :id
+                    """), {
+                        "p": nueva_hash,
+                        "id": usuario["id"]
+                    })
+                    conn.commit()
+
+                    st.success("Contraseña actualizada")
+                else:
+                    st.error("Contraseña actual incorrecta")
+
 
 # -----------------------------------
 # PAGOS
