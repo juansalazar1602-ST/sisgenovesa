@@ -42,6 +42,18 @@ def login():
             else:
                 st.error("Usuario no existe")
 
+usuario = st.session_state.usuario
+
+st.sidebar.write(f"Usuario: {usuario['username']}")
+st.sidebar.write(f"Rol: {usuario['rol']}")
+
+if usuario["rol"] == "ADMIN":
+    opciones = ["Dashboard", "Propiedades", "Pagos", "Gastos", "Usuarios"]
+else:
+    opciones = ["Mi Estado de Cuenta"]
+
+opcion = st.sidebar.selectbox("Menú", opciones)
+
 from sqlalchemy import text
 
 with engine.connect() as conn:
