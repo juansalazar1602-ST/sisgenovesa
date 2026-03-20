@@ -6,6 +6,14 @@ crear_tablas()
 from seed_propiedades import cargar_propiedades
 cargar_propiedades()
 
+from sqlalchemy import text
+
+with engine.connect() as conn:
+    result = conn.execute(text("SELECT COUNT(*) FROM propiedades"))
+    total = result.scalar()
+
+st.write(f"Total propiedades: {total}")
+
 st.set_page_config(page_title="SisGenovesa", layout="wide")
 
 st.title("Sistema de Alícuotas - Genovesa")
