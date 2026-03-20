@@ -101,7 +101,7 @@ elif opcion == "Propiedades":
         col2.write(p.tipo)
         nuevo_es_asociado = col3.checkbox(
             "Asociado",
-            value=True if p.es_asociado else False,
+            value=bool(p.es_asociado),
             key=f"asoc_{p.id}"
         )
         nuevo_tipo = col4.selectbox(
@@ -114,11 +114,11 @@ elif opcion == "Propiedades":
             with engine.connect() as conn:
                 conn.execute(text("""
                     UPDATE propiedades
-                    SET es_asociado = :nuevo_es_asociado,
+                    SET es_asociado = :es_asociado,
                     tipo = :tipo                        
                     WHERE id = :id
                 """), {
-                    "es_asociado":nuevo_es_asociado,
+                    "es_asociado": nuevo_es_asociado,
                     "tipo": nuevo_tipo,
                     "id": p.id
                 })
