@@ -12,6 +12,9 @@ crear_tablas()
 cargar_propiedades()
 crear_admin()
 
+if st.session_state.usuario is None:
+    login()
+    st.stop()
 
 if "usuario" not in st.session_state:
     st.session_state.usuario = None
