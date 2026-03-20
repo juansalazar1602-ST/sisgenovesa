@@ -54,6 +54,36 @@ else:
 
 opcion = st.sidebar.selectbox("Menú", opciones)
 
+if opcion == "Usuarios" and usuario["rol"] == "ADMIN":
+
+    st.subheader("Crear usuario")
+
+    username = st.text_input("Usuario (ej: casa_10)")
+    password = st.text_input("Contraseña", type="password")
+    propiedad_id = st.number_input("ID Propiedad", step=1)
+
+    if st.button("Crear usuario"):
+
+        import bcrypt
+        from sqlalchemy import text
+        from db import engine
+
+        hash_pw = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
+
+        with engine.connect() as conn:
+            conn.execute(text("""
+                INSERT INTO usuarios (username, password_hash, rol, propiedad_id)
+                VALUES (:u, :p, 'PROPIETARIO', :prop)
+            """), {
+                "u": username,
+                "p": hash_pw,
+                "prop": propiedad_id
+            })
+            conn.commit()
+
+        st.success("Usuario creado correctamente")
+
+
 from sqlalchemy import text
 
 with engine.connect() as conn:
