@@ -124,9 +124,7 @@ elif opcion == "Propiedades":
 # USUARIOS (ADMIN)
 # -----------------------------------
 elif opcion == "Usuarios" and usuario["rol"] == "ADMIN":
-
     st.subheader("Crear usuario")
-
     with engine.connect() as conn:
         propiedades = conn.execute(text("""
             SELECT id, numero_propiedad FROM propiedades
@@ -142,9 +140,7 @@ elif opcion == "Usuarios" and usuario["rol"] == "ADMIN":
 
     if st.button("Crear usuario"):
         propiedad_id = opciones_prop[propiedad_select]
-
         hash_pw = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
-
         with engine.connect() as conn:
             conn.execute(text("""
                 INSERT INTO usuarios (username, password_hash, rol, propiedad_id)
