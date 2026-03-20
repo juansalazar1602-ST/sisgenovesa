@@ -3,6 +3,8 @@ from db import engine
 from sqlalchemy import text
 from init_db import crear_tablas
 crear_tablas()
+from seed_propiedades import cargar_propiedades
+cargar_propiedades()
 
 st.set_page_config(page_title="SisGenovesa", layout="wide")
 
