@@ -15,8 +15,8 @@ def cargar_propiedades():
         # Insertar 118 propiedades como CASA
         for i in range(1, 119):
             conn.execute(text("""
-                INSERT INTO propiedades (numero_propiedad, tipo)
-                VALUES (:numero, 'CASA')
+                INSERT INTO propiedades (numero_propiedad, es_asociado, tipo)
+                VALUES (:numero, 'TRUE', 'CASA')
             """), {
                 "numero": i
             })
