@@ -85,6 +85,17 @@ def crear_tablas():
         );
         """))
 
+        conn.execute(text("""
+        CREATE TABLE IF NOT EXISTS usuarios (
+            id SERIAL PRIMARY KEY,
+            username VARCHAR(50) UNIQUE,
+            password_hash TEXT,
+            rol VARCHAR(20), -- ADMIN / PROPIETARIO
+            propiedad_id INT REFERENCES propiedades(id),
+            activo BOOLEAN DEFAULT TRUE
+        );
+        """))
+
         conn.commit()
 
     print("Tablas creadas correctamente")
