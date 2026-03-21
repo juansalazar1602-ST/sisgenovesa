@@ -95,11 +95,21 @@ def crear_tablas():
             activo BOOLEAN DEFAULT TRUE
         );
         """))
-        conn.execute(text("""
-        ALTER TABLE propiedades
-        ADD COLUMN IF NOT EXISTS es_asociado BOOLEAN DEFAULT TRUE;
-        """))
 
+        conn.execute(text("""
+        CREATE TABLE IF NOT EXISTS alicuotas (
+            id SERIAL PRIMARY KEY,
+            propiedad_id INT REFERENCES propiedades(id),
+            anio INT,
+            mes INT,
+            periodo VARCHAR(7), -- ej: 2023-01
+            valor NUMERIC(10,2),
+            estado VARCHAR(20) DEFAULT 'PENDIENTE',
+            fecha_pago DATE,
+            es_asociado BOOLEAN
+        );
+        """))
+        
         conn.commit()
 
     print("Tablas creadas correctamente")
