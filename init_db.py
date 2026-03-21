@@ -97,6 +97,16 @@ def crear_tablas():
         """))
 
         conn.execute(text("""
+        ALTER TABLE alicuotas
+        ADD COLUMN IF NOT EXISTS periodo VARCHAR(7);
+        """))
+
+        conn.execute(text("""
+        ALTER TABLE alicuotas
+        ADD COLUMN IF NOT EXISTS es_asociado BOOLEAN;
+        """))
+
+        conn.execute(text("""
         CREATE TABLE IF NOT EXISTS alicuotas (
             id SERIAL PRIMARY KEY,
             propiedad_id INT REFERENCES propiedades(id),
