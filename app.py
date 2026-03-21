@@ -200,6 +200,99 @@ elif opcion == "Cambiar Clave":
                 else:
                     st.error("Contraseña actual incorrecta")
 
+# -----------------------------------
+# PAGOS ALICOUTAS
+# -----------------------------------
+
+elif opcion == "Pagos":
+
+    st.subheader("Registrar pago")
+
+    with engine.connect() as conn:
+        props = conn.execute(text("""
+            SELECT id, numero_propiedad 
+            FROM propiedades
+            ORDER BY numero_propiedad
+        """)).fetchall()
+
+    opciones = {f"Casa {p.numero_propiedad}": p.id for p in props}
+
+    prop_sel = st.selectbox("Propiedad", list(opciones.keys()))
+    metodo = st.selectbox("Método de pago", ["EFECTIVO", "TRANSFERENCIA"])
+    obs = st.text_input("Observación")
+    monto = st.number_input("Monto a pagar", min_value=1.0, step=10.0)
+    
+    if st.button("Registrar pago"):
+    
+        if monto <= 0:
+            st.error("Monto inválido")
+            st.stop()
+    
+        propiedad_id = opciones[prop_sel]
+        restante = monto
+    
+        with engine.connect() as conn:
+    
+            deudas = conn.execute(text("""
+                SELECT id, valor
+                FROM alicuotas
+                WHERE propiedad_id = :p
+                AND estado = 'PENDIENTE'
+                ORDER BY anio, mes
+            """), {"p": propiedad_id}).fetchall()
+    
+            if not deudas:
+                st.warning("No tiene deudas pendientes")
+                st.stop()
+    
+            # guardar pago
+            conn.execute(text("""
+                INSERT INTO pagos 
+                (propiedad_id, monto, metodo_pago, observacion)
+                VALUES (:p, :m, :metodo, :obs)
+            """), {
+                "p": propiedad_id,
+                "m": monto,
+                "metodo": metodo,
+                "obs": obs
+            })
+    
+            for d in deudas:
+    
+                if restante <= 0:
+                    break
+    
+                if restante >= float(d.valor):
+                    conn.execute(text("""
+                        UPDATE alicuotas
+                        SET estado = 'PAGADO',
+                            fecha_pago = CURRENT_DATE
+                        WHERE id = :id
+                    """), {"id": d.id})
+    
+                    restante -= float(d.valor)
+    
+                else:
+                    break
+    
+            conn.commit()
+
+        st.success(f"Pago aplicado. Sobrante: {restante}")
+        st.rerun()
+
+    st.subheader("Deudas pendientes")
+
+    with engine.connect() as conn:
+        deuda = conn.execute(text("""
+            SELECT periodo, valor
+            FROM alicuotas
+            WHERE propiedad_id = :p
+            AND estado = 'PENDIENTE'
+            ORDER BY anio, mes
+        """), {"p": opciones[prop_sel]}).fetchall()
+
+    for d in deuda[:10]:
+        st.write(f"{d.periodo} - ${d.valor}")
 
 # -----------------------------------
 # PAGOS
