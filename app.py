@@ -5,7 +5,8 @@ from init_db import crear_tablas
 from seed_propiedades import cargar_propiedades
 from seed_usuarios import crear_admin
 import bcrypt
-
+from seed_alicuotas import generar_alicuotas
+generar_alicuotas()
 # -----------------------------------
 # CONFIGURACIÓN INICIAL
 # -----------------------------------
