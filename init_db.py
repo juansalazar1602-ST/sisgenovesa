@@ -4,6 +4,17 @@ from sqlalchemy import text
 def crear_tablas():
     with engine.connect() as conn:
 
+
+        
+        conn.execute(text("""
+        ALTER TABLE alicuotas
+        ADD COLUMN IF NOT EXISTS periodo VARCHAR(7);
+        """))
+
+        conn.execute(text("""
+        ALTER TABLE alicuotas
+        ADD COLUMN IF NOT EXISTS es_asociado BOOLEAN;
+        """))
         # PROPIEDADES
         conn.execute(text("""
         CREATE TABLE IF NOT EXISTS propiedades (
