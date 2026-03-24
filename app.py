@@ -219,10 +219,11 @@ elif opcion == "Pagos":
 
     prop_sel = st.selectbox("Propiedad", list(opciones.keys()))
     metodo = st.selectbox("Método de pago", ["EFECTIVO", "TRANSFERENCIA"])
-    obs = st.text_input("Observación")
-    monto = st.number_input("Monto a pagar", min_value=1.0, step=10.0)
     tipo_doc = st.selectbox("Tipo documento", ["RECIBO", "FACTURA"])
     num_doc = st.text_input("Número documento")
+    obs = st.text_input("Observación")
+    monto = st.number_input("Monto a pagar", min_value=1.0, step=10.0)
+   
     
     if st.button("Registrar pago"):
     
