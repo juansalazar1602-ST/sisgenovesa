@@ -221,6 +221,8 @@ elif opcion == "Pagos":
     metodo = st.selectbox("Método de pago", ["EFECTIVO", "TRANSFERENCIA"])
     obs = st.text_input("Observación")
     monto = st.number_input("Monto a pagar", min_value=1.0, step=10.0)
+    tipo_doc = st.selectbox("Tipo documento", ["RECIBO", "FACTURA"])
+    num_doc = st.text_input("Número documento")
     
     if st.button("Registrar pago"):
     
@@ -244,19 +246,24 @@ elif opcion == "Pagos":
             if not deudas:
                 st.warning("No tiene deudas pendientes")
                 st.stop()
-    
+            if not num_doc:
+                st.error("Debe ingresar número de documento")
+                st.stop()
+            
             # guardar pago
             conn.execute(text("""
                 INSERT INTO pagos 
-                (propiedad_id, monto, metodo_pago, observacion)
-                VALUES (:p, :m, :metodo, :obs)
+                (propiedad_id, monto, metodo_pago, observacion, tipo_documento, numero_documento)
+                VALUES (:p, :m, :metodo, :obs, :tipo_doc, :num_doc)
             """), {
                 "p": propiedad_id,
                 "m": monto,
                 "metodo": metodo,
-                "obs": obs
+                "obs": obs,
+                "tipo_doc": tipo_doc,
+                "num_doc": num_doc
             })
-    
+                
             for d in deudas:
     
                 if restante <= 0:
